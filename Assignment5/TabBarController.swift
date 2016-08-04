@@ -10,8 +10,8 @@ import UIKit
 
 class TabBarController: UITabBarController {
 
-    private let breakoutViewController = BreakoutViewController()
-    private let settingsViewController = SettingsViewController()
+    fileprivate let breakoutViewController = BreakoutViewController()
+    fileprivate let settingsViewController = SettingsViewController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,7 +20,7 @@ class TabBarController: UITabBarController {
         settingsViewController.tabBarItem = UITabBarItem(title: "Settings", image: nil, tag: 1)
     }
     
-    override func tabBar(tabBar: UITabBar, didSelectItem item: UITabBarItem) {
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         if item.tag == 0 {
             breakoutViewController.breakoutView.breakoutBehavior.ballBehavior.elasticity = settingsViewController.elasticity
             

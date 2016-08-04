@@ -10,14 +10,14 @@ import UIKit
 
 protocol BreakoutViewDelegate: class {
     func displayWinAlert()
-    func updateScore(score: String)
+    func updateScore(_ score: String)
 }
 
 class BreakoutView: UIView, UICollisionBehaviorDelegate {
     
     //MARK: Animator properties
     let breakoutBehavior = BreakoutBehavior()
-    private lazy var animator: UIDynamicAnimator = UIDynamicAnimator(referenceView: self)
+    fileprivate lazy var animator: UIDynamicAnimator = UIDynamicAnimator(referenceView: self)
     var animating: Bool = false {
         didSet {
             if animating {
@@ -29,22 +29,22 @@ class BreakoutView: UIView, UICollisionBehaviorDelegate {
     }
     
     //MARK: Animating Elements & Properties
-    private let paddle: UIView = {
+    fileprivate let paddle: UIView = {
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.backgroundColor = .blueColor()
+        $0.backgroundColor = .blue
         return $0
     }(UIView())
-    private var ballSize: CGSize {
+    fileprivate var ballSize: CGSize {
         let width = 30
         let height = 30
         return CGSize(width: width, height: height)
     }
-    private var paddleSize: CGSize {
+    fileprivate var paddleSize: CGSize {
         let width = 150
         let height = 30
         return CGSize(width: width, height: height)
     }
-    private var bricks: [UIView] = []
+    fileprivate var bricks: [UIView] = []
     var bouncingBalls: [UIView] = []
     var anyBallInOuterSpace = false
     var bricksPerRow = 4
@@ -61,12 +61,12 @@ class BreakoutView: UIView, UICollisionBehaviorDelegate {
     weak var dataSource: BreakoutViewDelegate?
     
     //MARK: Boundary for collision
-    private func addBoundary(name: String, start: CGPoint, end: CGPoint) {
-        breakoutBehavior.collider.addBoundaryWithIdentifier(name, fromPoint: start, toPoint: end)
+    fileprivate func addBoundary(_ name: String, start: CGPoint, end: CGPoint) {
+        breakoutBehavior.collider.addBoundary(withIdentifier: name as NSCopying, from: start, to: end)
     }
     
-    private func removeBoundary(name: String) {
-        breakoutBehavior.collider.removeBoundaryWithIdentifier(name)
+    fileprivate func removeBoundary(_ name: String) {
+        breakoutBehavior.collider.removeBoundary(withIdentifier: name as NSCopying)
     }
     
     func addBarriersToBounds() {
@@ -107,9 +107,9 @@ class BreakoutView: UIView, UICollisionBehaviorDelegate {
                 let origin = CGPoint(x: x, y: y)
                 let brick: UIView = {
                     if row == specialBrickAtRow && column == specialBrickAtColumn {
-                        $0.backgroundColor = .greenColor()
+                        $0.backgroundColor = .green
                     } else {
-                        $0.backgroundColor = .blueColor()
+                        $0.backgroundColor = .blue
                     }
                     $0.translatesAutoresizingMaskIntoConstraints = false
                     return $0
@@ -138,7 +138,7 @@ class BreakoutView: UIView, UICollisionBehaviorDelegate {
             let frame = CGRect(origin: origin, size: ballSize)
             let ball: UIView = {
                 $0.translatesAutoresizingMaskIntoConstraints = false
-                $0.backgroundColor = .redColor()
+                $0.backgroundColor = .red
                 $0.frame = frame
                 $0.layer.cornerRadius = ballSize.height / 2
                 return $0
@@ -166,25 +166,25 @@ class BreakoutView: UIView, UICollisionBehaviorDelegate {
     
     func createPaddle() {
         self.addSubview(paddle)
-        self.addConstraint(NSLayoutConstraint(item: paddle, attribute: .Leading, relatedBy: .Equal, toItem: self, attribute: .Leading, multiplier: 1.0, constant: superview!.bounds.midX - (paddleSize.width / 2)))
-        self.addConstraint(NSLayoutConstraint(item: paddle, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .Bottom, multiplier: 1.0, constant: -8.0))
-        self.addConstraint(NSLayoutConstraint(item: paddle, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: paddleSize.width))
-        self.addConstraint(NSLayoutConstraint(item: paddle, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: paddleSize.height))
+        self.addConstraint(NSLayoutConstraint(item: paddle, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1.0, constant: superview!.bounds.midX - (paddleSize.width / 2)))
+        self.addConstraint(NSLayoutConstraint(item: paddle, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant: -8.0))
+        self.addConstraint(NSLayoutConstraint(item: paddle, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: paddleSize.width))
+        self.addConstraint(NSLayoutConstraint(item: paddle, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: paddleSize.height))
         paddle.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(movePaddle)))
         let startPoint = CGPoint(x: superview!.bounds.midX - (paddleSize.width / 2), y: paddle.center.y - (paddleSize.height / 2))
         let endPoint = CGPoint(x: superview!.bounds.midX + (paddleSize.width / 2), y: paddle.center.y - (paddleSize.height / 2))
         addBoundary("paddle barrier", start: startPoint, end: endPoint)
     }
     
-    func movePaddle(sender: UIPanGestureRecognizer) {
-        let translation = sender.translationInView(self)
+    func movePaddle(_ sender: UIPanGestureRecognizer) {
+        let translation = sender.translation(in: self)
         paddle.center.x = paddle.center.x + translation.x
         if paddle.center.x < self.superview!.bounds.minX + (paddleSize.width / 2) {
             paddle.center.x = self.superview!.bounds.minX + (paddleSize.width / 2)
         } else if paddle.center.x > self.superview!.bounds.maxX - (paddleSize.width / 2) {
             paddle.center.x = self.superview!.bounds.maxX - (paddleSize.width / 2)
         }
-        sender.setTranslation(CGPointZero, inView: self)
+        sender.setTranslation(CGPoint.zero, in: self)
         let startPoint = CGPoint(x: paddle.center.x - (paddleSize.width / 2), y: paddle.center.y - (paddleSize.height / 2))
         let endPoint = CGPoint(x: paddle.center.x + (paddleSize.width / 2), y: paddle.center.y - (paddleSize.height / 2))
         removeBoundary("paddle barrier")
@@ -192,7 +192,7 @@ class BreakoutView: UIView, UICollisionBehaviorDelegate {
     }
     
     //MARK: collision delegate method
-    func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item1: UIDynamicItem, withItem item2: UIDynamicItem, atPoint p: CGPoint) {
+    func collisionBehavior(_ behavior: UICollisionBehavior, beganContactFor item1: UIDynamicItem, with item2: UIDynamicItem, at p: CGPoint) {
         var brick: UIView?
         if item1.bounds.width == bricks[0].frame.width {
             brick = item1 as? UIView
@@ -201,12 +201,12 @@ class BreakoutView: UIView, UICollisionBehaviorDelegate {
         }
         
         if let brick = brick {
-            for (index, theBrick) in bricks.enumerate() {
+            for (index, theBrick) in bricks.enumerated() {
                 if brick == theBrick {
-                    bricks.removeAtIndex(index)
+                    bricks.remove(at: index)
                 }
             }
-            if brick.backgroundColor == .greenColor() {
+            if brick.backgroundColor == .green {
                 score += 100
             } else if breakoutBehavior.ballBehavior.elasticity == 1 {
                 score += 10
@@ -216,11 +216,11 @@ class BreakoutView: UIView, UICollisionBehaviorDelegate {
                 score += 30
             }
             self.breakoutBehavior.removeBehaviors(brick)
-            UIView.animateWithDuration(0.5, delay: 0.0, options: .CurveEaseInOut, animations: {
+            UIView.animate(withDuration: 0.5, delay: 0.0, options: UIViewAnimationOptions(), animations: {
                 brick.flip()
                 brick.alpha = 1.0
             }) { (finished) in
-                brick.hidden = true
+                brick.isHidden = true
             }
             if bricks.isEmpty {
                 removeBalls()

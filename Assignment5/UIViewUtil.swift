@@ -11,6 +11,6 @@ import UIKit
 
 extension UIView {
     func flip() {
-        transform = CGAffineTransformMakeScale(-transform.a, transform.d)
+        transform = CGAffineTransform(scaleX: -transform.a, y: transform.d)
     }
 }

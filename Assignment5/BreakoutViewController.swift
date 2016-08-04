@@ -10,7 +10,7 @@ import UIKit
 
 class BreakoutViewController: UIViewController {
 
-    private let scoreLabel: UILabel = {
+    fileprivate let scoreLabel: UILabel = {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.text = "Score : 0"
         return $0
@@ -24,7 +24,7 @@ class BreakoutViewController: UIViewController {
     //MARK: Lifecycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.edgesForExtendedLayout = .None
+        self.edgesForExtendedLayout = UIRectEdge()
         addScoreLabel()
         addBreakoutView()
         breakoutView.dataSource = self
@@ -41,38 +41,38 @@ class BreakoutViewController: UIViewController {
         breakoutView.addBarriersToBounds()
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         breakoutView.animating = true
     }
     
     //MARK: Setting constraints
     
-    private func addScoreLabel() {
+    fileprivate func addScoreLabel() {
         view.addSubview(scoreLabel)
         
-        view.addConstraint(NSLayoutConstraint(item: scoreLabel, attribute: .Top, relatedBy: .Equal, toItem: view, attribute: .Top, multiplier: 1.0, constant: UIApplication.sharedApplication().statusBarFrame.size.height))
+        view.addConstraint(NSLayoutConstraint(item: scoreLabel, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1.0, constant: UIApplication.shared.statusBarFrame.size.height))
         
-        view.addConstraint(NSLayoutConstraint(item: scoreLabel, attribute: .Leading, relatedBy: .Equal, toItem: view, attribute: .Leading, multiplier: 1.0, constant: 0.0))
+        view.addConstraint(NSLayoutConstraint(item: scoreLabel, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1.0, constant: 0.0))
     }
     
-    private func addBreakoutView() {
+    fileprivate func addBreakoutView() {
         view.addSubview(breakoutView)
         
-        view.addConstraint(NSLayoutConstraint(item: breakoutView, attribute: .Top, relatedBy: .Equal, toItem: scoreLabel, attribute: .Bottom, multiplier: 1.0, constant: 0.0))
+        view.addConstraint(NSLayoutConstraint(item: breakoutView, attribute: .top, relatedBy: .equal, toItem: scoreLabel, attribute: .bottom, multiplier: 1.0, constant: 0.0))
         
-        view.addConstraint(NSLayoutConstraint(item: breakoutView, attribute: .Leading, relatedBy: .Equal, toItem: view, attribute: .Leading, multiplier: 1.0, constant: 0.0))
+        view.addConstraint(NSLayoutConstraint(item: breakoutView, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1.0, constant: 0.0))
         
-        view.addConstraint(NSLayoutConstraint(item: breakoutView, attribute: .Trailing, relatedBy: .Equal, toItem: view, attribute: .Trailing, multiplier: 1.0, constant: 0.0))
+        view.addConstraint(NSLayoutConstraint(item: breakoutView, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1.0, constant: 0.0))
         
-        view.addConstraint(NSLayoutConstraint(item: breakoutView, attribute: .Bottom, relatedBy: .Equal, toItem: view, attribute: .Bottom, multiplier: 1.0, constant: 0.0))
+        view.addConstraint(NSLayoutConstraint(item: breakoutView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1.0, constant: 0.0))
     }
     
     //MARK: Collider action
-    private func addActionToCollider() {
+    fileprivate func addActionToCollider() {
         breakoutView.breakoutBehavior.collider.action = { [unowned self] in
             for ball in self.breakoutView.bouncingBalls {
-                if !CGRectIntersectsRect(ball.frame, self.breakoutView.frame) && (self.breakoutView.anyBallInOuterSpace == false) {
+                if !ball.frame.intersects(self.breakoutView.frame) && (self.breakoutView.anyBallInOuterSpace == false) {
                     self.breakoutView.removeBalls()
                     self.breakoutView.removeBricks()
                     self.displayLoseAlert()
@@ -83,12 +83,12 @@ class BreakoutViewController: UIViewController {
     }
     
     //MARK: Alert method
-    private func displayLoseAlert() {
+    fileprivate func displayLoseAlert() {
         let title = "You Lost"
         let message = " Your Score is " + "\(breakoutView.score)" + "\n Press OK to play again"
         let okText = "ok"
-        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
-        let okButton = UIAlertAction(title: okText, style: UIAlertActionStyle.Default) { (okButton) in
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        let okButton = UIAlertAction(title: okText, style: UIAlertActionStyle.default) { (okButton) in
             self.breakoutView.score = 0
             self.breakoutView.createBricks()
             self.breakoutView.createBalls()
@@ -96,7 +96,7 @@ class BreakoutViewController: UIViewController {
             self.breakoutView.anyBallInOuterSpace = false
         }
         alert.addAction(okButton)
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
 }
 
@@ -106,17 +106,17 @@ extension BreakoutViewController: BreakoutViewDelegate {
         let title = "You Won"
         let message = "Congratulations you won the game. Your Score is " + "\(breakoutView.score)" + "\n Press OK to play again"
         let okText = "ok"
-        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
-        let okButton = UIAlertAction(title: okText, style: UIAlertActionStyle.Default) { (okButton) in
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        let okButton = UIAlertAction(title: okText, style: UIAlertActionStyle.default) { (okButton) in
             self.breakoutView.score = 0
             self.breakoutView.createBricks()
             self.breakoutView.createBalls()
         }
         alert.addAction(okButton)
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
-    func updateScore(score: String) {
+    func updateScore(_ score: String) {
         scoreLabel.text = "Score : " + score
     }
 }

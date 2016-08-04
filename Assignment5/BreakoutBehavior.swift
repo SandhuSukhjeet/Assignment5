@@ -38,12 +38,12 @@ class BreakoutBehavior: UIDynamicBehavior {
         addChildBehavior(brickBehavior)
     }
     
-    func addCollision(item: UIDynamicItem) {
+    func addCollision(_ item: UIDynamicItem) {
         collider.addItem(item)
     }
     
-    func addPush(item: UIDynamicItem) {
-        let push = UIPushBehavior(items: [item], mode: .Instantaneous)
+    func addPush(_ item: UIDynamicItem) {
+        let push = UIPushBehavior(items: [item], mode: .instantaneous)
         
         // we are setting different push angles for different balls
         var angle: CGFloat = -45
@@ -64,15 +64,15 @@ class BreakoutBehavior: UIDynamicBehavior {
         count += 1
     }
     
-    func addBallBehavior(item: UIDynamicItem) {
+    func addBallBehavior(_ item: UIDynamicItem) {
         ballBehavior.addItem(item)
     }
     
-    func addBrickBehavior(item: UIDynamicItem) {
+    func addBrickBehavior(_ item: UIDynamicItem) {
         brickBehavior.addItem(item)
     }
     
-    func removeBehaviors(item: UIDynamicItem) {
+    func removeBehaviors(_ item: UIDynamicItem) {
         collider.removeItem(item)
         brickBehavior.removeItem(item)
         ballBehavior.removeItem(item)
